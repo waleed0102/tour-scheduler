@@ -11,7 +11,7 @@ class ToursController < ApplicationController
     if tour.save
       render json: { success: true, tour: tour }
     else
-      render json: { success: false, errors: tour.errors.full_messages.join(",") }
+      render json: { success: false, errors: tour.errors.full_messages.join(',') }
     end
   end
 

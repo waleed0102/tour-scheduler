@@ -3,3 +3,6 @@ Metrics/CyclomaticComplexity:
 
 Metrics/PerceivedComplexity:
   Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
