@@ -7,6 +7,7 @@ class ToursController < ApplicationController
   def create
     tour = @operator.tours.new(tour_params)
     tour.dates = JSON.parse(params[:tour][:dates]) if params[:tour][:dates]
+    tour.repeating_weekdays = JSON.parse(params[:tour][:repeating_weekdays]) if params[:tour][:repeating_weekdays]
 
     if tour.save
       render json: { success: true, tour: tour }
