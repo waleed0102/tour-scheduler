@@ -49,22 +49,32 @@ class Tour < ApplicationRecord
   end
 
   def starting_timestamp
-    "#{starting_hour}#{starting_minute}".to_i
+    "#{starting_hour}:#{starting_minute}"
   end
 
   def ending_timestamp
     ending_hour, ending_minute = ending_hour_minute
-    "#{ending_hour}#{ending_minute}".to_i
+    "#{ending_hour}:#{ending_minute}"
+  end
+
+  def self.time_overlap?(tour_a, tour_b)
+    (Time.parse(tour_a.starting_timestamp)..Time.parse(tour_a.ending_timestamp)) &
+      (Time.parse(tour_b.starting_timestamp)..Time.parse(tour_b.ending_timestamp))
+  end
+
+  def self.weekdays_overlap?(tour_a, tour_b)
+    (tour_a.repeating_weekdays & tour_b.repeating_weekdays).present? &&
+      tour_a.repeating_weekday_no == tour_b.repeating_weekday_no
   end
 
   private
 
   def one_tour_at_a_time
     clashing_tour = Tour.where(operator: operator).select do |tour|
-      if starting_timestamp >= tour.starting_timestamp && ending_timestamp <= tour.ending_timestamp
+      if Tour.time_overlap?(self, tour)
         if tour.dates.present? && dates.present? && (tour.dates & dates).present?
           true
-        elsif (repeating_weekdays & tour.repeating_weekdays).present? && repeating_weekday_no == tour.repeating_weekday_no
+        elsif Tour.weekdays_overlap?(self, tour)
           true
         end
       end
